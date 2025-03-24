@@ -2,7 +2,9 @@ import express from "express";
 import { Todos } from "../models/todos.model";
 import { asyncHandler } from "../utils/fuctionList";
 import { User } from "../models/user.model";
-import mongoose from "mongoose";
+import mongoose, { now } from "mongoose";
+import { sendEmailReminder } from "../utils/email.service";
+import cron from "node-cron";
 export const createTodos = asyncHandler(
   async (
     req: express.Request,
@@ -271,3 +273,67 @@ export const updateTodosStatusToPending = asyncHandler(
     }
   }
 );
+
+export const sendReminder = asyncHandler(
+  async (
+    req: express.Request<{ id: string }>,
+    res: express.Response
+  ): Promise<express.Response> => {
+    const { id } = req.params;
+    const { reminderTime }: { reminderTime: Date } = req.body;
+    if (!id || !reminderTime) {
+      return res
+        .status(400)
+        .json({ error: "Todo ID and Reminder Time are required." });
+    }
+    const updateReminderOfTodos = await Todos.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          remiderTime: new Date(reminderTime),
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    if (updateReminderOfTodos) {
+      return res.status(200).json({
+        message: "Reminder set successfully.",
+        data: updateReminderOfTodos,
+        error: null,
+        status: 200,
+      });
+    } else {
+      return res.status(500).json({
+        error: "Reminder not set.",
+        data: null,
+        message: null,
+        status: 500,
+      });
+    }
+  }
+);
+
+const sendReminders = async () => {
+  try {
+    const now = new Date();
+
+    // Find tasks where reminderTime is within the last 1 minute
+    const reminders = await Todos.find({
+      reminderTime: { $gte: new Date(now.getTime() - 60000), $lt: now },
+      status: "pending",
+    }).populate("createdFor", "email"); // Populate user email
+
+    for (const todo of reminders) {
+    }
+  } catch (error) {
+    console.error("Error sending reminders:", error);
+  }
+};
+
+// Schedule job to run every minute
+cron.schedule("* * * * *", async () => {
+  console.log(" Checking for tasks with reminder times...");
+  await sendReminders();
+});

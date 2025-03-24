@@ -7,6 +7,7 @@ export interface TaskDocument extends Document {
   status: string;
   createdFor: Types.ObjectId;
   dueDate: Date;
+  remiderTime: Date;
   isDeleted: Boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -55,6 +56,10 @@ const todoSchema = new Schema<TaskDocument>(
     dueDate: {
       type: Date,
       required: true,
+    },
+    remiderTime: {
+      type: Date,
+      required: false,
     },
   },
   {
