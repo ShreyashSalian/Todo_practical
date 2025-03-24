@@ -333,7 +333,7 @@ const sendReminders = async () => {
 };
 
 // Schedule job to run every minute
-cron.schedule("* * * * *", async () => {
-  console.log(" Checking for tasks with reminder times...");
-  await sendReminders();
-});
+// cron.schedule("* * * * *", async () => {
+//   console.log(" Checking for tasks with reminder times...");
+//   await sendReminders();
+// });

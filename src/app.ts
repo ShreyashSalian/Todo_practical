@@ -1,10 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import compression from "compression";
-import cluster from "cluster";
-import os from "os";
-
 import cookieParser from "cookie-parser";
 import path from "path";
 import connectDB from "./database/connect";
@@ -29,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(path.resolve(), "public")));
 app.use("images", express.static("public/images"));
 app.use(cookieParser());
-app.use(compression());
+
 app.set("view engine", "hbs");
 app.set("views", "./src/views");
 
