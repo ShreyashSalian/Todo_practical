@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import { Login } from "../models/login.model";
 import { UserLoginDetails } from "../helper/user.helper";
+import { asyncHandler } from "../utils/fuctionList";
 
 const generateAccessAndRefreshToken = async (
   userId: string
@@ -16,11 +17,11 @@ const generateAccessAndRefreshToken = async (
 };
 
 //POST METHOD => ALLOW THE USER TO LOGIN
-export const login = async (
-  req: Request<{}, {}, UserLoginDetails>,
-  res: Response
-): Promise<Response> => {
-  try {
+export const login = asyncHandler(
+  async (
+    req: Request<{}, {}, UserLoginDetails>,
+    res: Response
+  ): Promise<Response> => {
     const { emailOrUserName, password } = req.body;
     const userFound = await User.findOne({
       $or: [
@@ -70,39 +71,30 @@ export const login = async (
     const loginUser = await User.findById(userFound?._id).select(
       "-password -refreshToken"
     );
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
+    // const options = {
+    //   httpOnly: true,
+    //   secure: true,
+    // };
 
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
-      .json({
-        status: 200,
-        message: "User has login successfully.",
-        data: { accessToken, refreshToken, loginUser },
-        error: null,
-      });
-  } catch (err: any) {
-    console.log(err);
-    const responsePayload = {
-      status: 500,
-      message: null,
-      data: null,
-      error: "Internal server error",
-    };
-    return res.status(500).json(responsePayload);
+    return (
+      res
+        .status(200)
+        // .cookie("accessToken", accessToken, options)
+        // .cookie("refreshToken", refreshToken, options)
+        .json({
+          status: 200,
+          message: "User has login successfully.",
+          data: { accessToken, refreshToken, loginUser },
+          error: null,
+        })
+    );
   }
-};
+);
 
 //GET ALLOW THE USER TO LOGOUT
-export const logout = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  try {
+export const userLogout = asyncHandler(
+  async (req: Request, res: Response): Promise<express.Response> => {
+    console.log(req.user.userId);
     if (!req.user?.userId) {
       const responsePayload = {
         status: 200,
@@ -124,11 +116,11 @@ export const logout = async (
       };
       return res.status(200).json(responsePayload);
     } else {
-      const cookieOptions = {
-        httpOnly: true,
-        secure: true, // Ensure secure cookies in production
-        sameSite: "strict" as const, // Add `sameSite` for CSRF protection
-      };
+      // const cookieOptions = {
+      //   httpOnly: true,
+      //   secure: true, // Ensure secure cookies in production
+      //   sameSite: "strict" as const, // Add `sameSite` for CSRF protection
+      // };
 
       const responsePayload = {
         status: 200,
@@ -137,20 +129,13 @@ export const logout = async (
         error: null,
       };
 
-      return res
-        .status(200)
-        .clearCookie("accessToken", cookieOptions)
-        .clearCookie("refreshToken", cookieOptions)
-        .json(responsePayload);
+      return (
+        res
+          .status(200)
+          // .clearCookie("accessToken", cookieOptions)
+          // .clearCookie("refreshToken", cookieOptions)
+          .json(responsePayload)
+      );
     }
-  } catch (err: any) {
-    console.log(err);
-    const responsePayload = {
-      status: 500,
-      message: null,
-      data: null,
-      error: "Internal server error",
-    };
-    return res.status(500).json(responsePayload);
   }
-};
+);

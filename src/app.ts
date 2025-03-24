@@ -8,6 +8,7 @@ import os from "os";
 import cookieParser from "cookie-parser";
 import path from "path";
 import connectDB from "./database/connect";
+import indexRoutes from "./routes/index.routes";
 dotenv.config();
 
 const app = express();
@@ -39,3 +40,5 @@ connectDB()
   .catch(() => {
     console.log("Error while connection to the database");
   });
+
+app.use(indexRoutes);
