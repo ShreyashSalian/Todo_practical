@@ -13,7 +13,7 @@ services:
   backend:
     build:
       context: . # Use `.` since `Dockerfile` is in the same directory
-      dockerfile: dockerfile # Ensure `Dockerfile` exists
+      dockerfile: Dockerfile # Ensure `Dockerfile` exists
     image: backend-image
     container_name: backend_container
     ports:
