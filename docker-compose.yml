@@ -19,13 +19,14 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /app/node_modules # Anonymous volume
-      - .:/app # Bind mount to sync current folder
+      - node_modules:/app/node_modules # Persist node_modules
+      - .:/app # Sync current folder with container
     restart: always
     env_file:
-      - .env # No need for `./` as `.env` is in the same directory
+      - .env # Load environment variables
     depends_on:
       - mongodb
 
 volumes:
-  data:
+  data: # Corrected volume definition
+  node_modules: # Added volume for node_modules
