@@ -3,8 +3,8 @@ import { addUserAdmin } from "../utils/addAdmin";
 const connectDB = async (): Promise<void> => {
   try {
     const connection = await mongoose.connect(
-      // `mongodb://mongodb-container:27017/${process.env.DATABASE_NAME}`
-      `${process.env.LOCAL_PATH}/${process.env.DATABASE_NAME}`
+      `mongodb://mongodb-container:27017/${process.env.DATABASE_NAME}` // for docker
+      // `${process.env.LOCAL_PATH}/${process.env.DATABASE_NAME}` // for local
     );
     addUserAdmin();
     console.log(`Connected to database : ${connection.connection.host}`);
