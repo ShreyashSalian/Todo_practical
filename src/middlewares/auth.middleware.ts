@@ -19,7 +19,7 @@ export const verifyUser = asyncHandler(
       const token: string | undefined =
         req.cookies?.accessToken ||
         req.header("Authorization")?.replace("Bearer ", "").trim();
-      console.log(token);
+
       if (!token) {
         return res.status(401).json({
           status: 401,
