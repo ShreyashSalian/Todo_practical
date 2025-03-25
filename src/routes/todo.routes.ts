@@ -28,5 +28,6 @@ todoRoutes.post(
   verifyUser,
   updateTodosStatusToPending
 );
+todoRoutes.delete("/:id", verifyUser, deleteTodos);
 
 export default todoRoutes;
