@@ -307,22 +307,48 @@ export const sendReminder = asyncHandler(
 const sendReminders = async () => {
   try {
     const now = new Date();
-
-    // Find tasks where reminderTime is within the last 1 minute
-    const reminders = await Todos.find({
-      reminderTime: { $gte: new Date(now.getTime() - 60000), $lt: now },
-      status: "pending",
-    }).populate("createdFor", "email"); // Populate user email
+    const reminders = await Todos.aggregate([
+      {
+        $match: {
+          reminderTime: {
+            $gte: new Date(now.getTime() - 60000), //Reminder time is greater than or equal to 1 minute ago
+            $lt: now, //Reminder time is less than the current time
+          }, // Check whether the reminder time is
+          status: "pending",
+        },
+      },
+      {
+        $lookup: {
+          from: "users", // Ensure this matches your MongoDB collection name
+          foreignField: "_id",
+          localField: "createdFor",
+          as: "UserDetails",
+        },
+      },
+      {
+        $addFields: {
+          userDetails: { $first: "$UserDetails" }, // Get the first user object
+        },
+      },
+    ]);
 
     for (const todo of reminders) {
+      if (todo.userDetails && todo.userDetails.email) {
+        await sendEmailReminder(
+          todo.userDetails.email,
+          "Reminder: Upcoming Todo Task",
+          `Hey ${todo.userDetails.fullName}, your task "${todo.title}" is due soon!`
+        );
+        console.log(`Reminder email sent to ${todo.userDetails.email}`);
+      }
     }
   } catch (error) {
     console.error("Error sending reminders:", error);
   }
 };
 
-// Schedule job to run every minute
-// cron.schedule("* * * * *", async () => {
-//   console.log(" Checking for tasks with reminder times...");
-//   await sendReminders();
-// });
+// Schedule job to run every 2 minute
+cron.schedule("*/2 * * * *", async () => {
+  console.log(" Checking for tasks with reminder times...");
+  await sendReminders();
+});

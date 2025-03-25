@@ -6,6 +6,7 @@ import {
   createTodos,
   deleteTodos,
   getTodosByDate,
+  sendReminder,
   updateTodosDetails,
   updateTodosStatus,
   updateTodosStatusToPending,
@@ -29,5 +30,6 @@ todoRoutes.post(
   updateTodosStatusToPending
 );
 todoRoutes.delete("/:id", verifyUser, deleteTodos);
+todoRoutes.post("/send-reminder", verifyUser, sendReminder);
 
 export default todoRoutes;
