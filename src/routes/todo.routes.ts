@@ -15,10 +15,16 @@ const todoRoutes = express.Router();
 todoRoutes.post("/", verifyUser, todoValidation(), validateApi, createTodos);
 todoRoutes.post("/todos-by-date", verifyUser, getTodosByDate);
 todoRoutes.put("/:id", verifyUser, updateTodosDetails);
-todoRoutes.delete("/:id", verifyUser, deleteTodos);
-todoRoutes.post("update-todo-to-complete/:id", verifyUser, updateTodosStatus);
+todoRoutes.post("/update-todo-to-complete/:id", verifyUser, updateTodosStatus);
 todoRoutes.post(
-  "update-todo-to-pending/:id",
+  "/update-todo-to-pending/:id",
+  verifyUser,
+  updateTodosStatusToPending
+);
+todoRoutes.delete("/:id", verifyUser, deleteTodos);
+todoRoutes.post("/update-todo-to-complete/:id", verifyUser, updateTodosStatus);
+todoRoutes.post(
+  "/update-todo-to-pending/:id",
   verifyUser,
   updateTodosStatusToPending
 );
