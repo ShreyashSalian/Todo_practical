@@ -2,15 +2,25 @@
 
 This is typescript with nodejs project
 
-## Deployment
-
-To deploy this project run
+To clone this project
 
 ```bash
-  npm run start
+  git clone https://github.com/ShreyashSalian/Todo_practical.git
+```
+
+## Deployment
+
+Point to the Todo_practical folder after cloning using
+
+```bash
+  cd Todo_practical # Point to the Todo_practical folder after cloning using
 ```
 
 To build this project
+
+```bash
+  npm install # to install packages
+```
 
 ```bash
   npm run build # to build the code to typescript
@@ -22,12 +32,6 @@ To build this project
 
 ```bash
   npm run dev # to start typescript
-```
-
-To clone this project
-
-```bash
-  git clone https://github.com/ShreyashSalian/Todo_practical.git
 ```
 
 ## Build With
