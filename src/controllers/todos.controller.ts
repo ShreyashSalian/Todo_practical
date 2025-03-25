@@ -173,18 +173,7 @@ export const deleteTodos = asyncHandler(
         error: "Unauthorized request.",
       });
     }
-
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-
-    const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999);
-
-    const todo = await Todos.findOneAndDelete({
-      _id: new mongoose.Types.ObjectId(id),
-      createdFor: new mongoose.Types.ObjectId(userId),
-      dueDate: { $gte: todayStart, $lt: todayEnd },
-    });
+    const todo = await Todos.findByIdAndDelete(id);
     if (!todo) {
       return res.status(404).json({
         status: 404,
