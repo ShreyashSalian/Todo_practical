@@ -1,4 +1,4 @@
-# Task management
+# Todo management
 
 This is typescript with nodejs project
 
